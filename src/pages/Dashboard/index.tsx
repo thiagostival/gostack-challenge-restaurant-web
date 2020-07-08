@@ -26,31 +26,64 @@ const Dashboard: React.FC = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
-    async function loadFoods(): Promise<void> {
-      // TODO LOAD FOODS
-    }
-
-    loadFoods();
-  }, []);
+    api.get('/foods').then(response => {
+      setFoods(response.data);
+    });
+  }, [setFoods]);
 
   async function handleAddFood(
     food: Omit<IFoodPlate, 'id' | 'available'>,
   ): Promise<void> {
     try {
-      // TODO ADD A NEW FOOD PLATE TO THE API
+      const response = await api.post<IFoodPlate>('/foods', {
+        name: food.name,
+        description: food.description,
+        price: food.price,
+        available: true,
+        image: food.image,
+      });
+
+      setFoods([...foods, response.data]);
     } catch (err) {
       console.log(err);
     }
   }
 
-  async function handleUpdateFood(
-    food: Omit<IFoodPlate, 'id' | 'available'>,
-  ): Promise<void> {
-    // TODO UPDATE A FOOD PLATE ON THE API
+  async function handleUpdateFood({
+    name,
+    description,
+    price,
+    image,
+  }: Omit<IFoodPlate, 'id' | 'available'>): Promise<void> {
+    try {
+      const response = await api.put(`/foods/${editingFood.id}`, {
+        id: editingFood.id,
+        name,
+        description,
+        price,
+        available: editingFood.available,
+        image,
+      });
+
+      const updateFood = foods.map(updFood => updFood);
+      const indexFood = foods.findIndex(
+        updFood => updFood.id === editingFood.id,
+      );
+      updateFood[indexFood] = response.data;
+
+      setFoods(updateFood);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async function handleDeleteFood(id: number): Promise<void> {
-    // TODO DELETE A FOOD PLATE FROM THE API
+    try {
+      await api.delete(`/foods/${id}`);
+      setFoods(foods.filter(food => food.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   function toggleModal(): void {
@@ -62,7 +95,8 @@ const Dashboard: React.FC = () => {
   }
 
   function handleEditFood(food: IFoodPlate): void {
-    // TODO SET THE CURRENT EDITING FOOD ID IN THE STATE
+    setEditModalOpen(true);
+    setEditingFood(food);
   }
 
   return (
