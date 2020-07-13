@@ -14,6 +14,8 @@ Desafio passado no GoStack bootcamp da RocketSeat, para desenvolver uma aplicaç
 
 <p>
 Essa será uma aplicação que irá se conectar a uma fake API, e exibir os pratos de comida criados e permitir a criação, remoção e atualização desses pratos.
+<br>
+Versão mobile da aplicação <a href="https://github.com/thiagostival/gostack-challenge-restaurant-mobile.git">Disponível aqui</a>.
 </p>
 
 <br>
